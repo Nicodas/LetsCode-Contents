@@ -4,9 +4,13 @@ author: "Adrien ROUX"
 date: "February, 2017"
 output: 
   html_document: 
+    number_sections: yes
+    theme: readable
     toc: yes
-    toc_depth: 2
+    toc_depth: 1
 ---
+
+***
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
@@ -17,8 +21,11 @@ The topic introduced this week is **Data visualisation** which is a wide topic t
 * 2d plots (histogram, points, lines),
 * 3d plots (3d points, 3d lines,surface,...),
 * geo maps,
-* word clouds,
-* network representations.
+* word clouds.
+
+Further data visualisation are available, e.g. pie charts. If I had to present one more, it would be network representations. Unfortunaltely, I need more practice on this topic to be able to present you something.
+
+***
 
 # Word clouds
 
@@ -156,35 +163,55 @@ leaflet(df) %>%
   addCircles(lng = ~Long, lat = ~Lat, color = "#000")
 ```
 
-```{r}
-library(maps)
-mapFrance = map("france", fill= TRUE, plot= FALSE)
-
-str(mapFrance)
-
-leaflet(data = mapFrance) %>% addTiles() %>%
-  addPolygons(fillColor = topo.colors(5, alpha = NULL), stroke = FALSE)
-```
 
 # 3d plots
 
-```{r}
+There is a lot of packages offering 3d visualisations. plotly is one of my favorites.
+<https://plot.ly/r/>
 
-```
-
-# Network representation
-
-<http://kateto.net/network-visualization>
-
-
-```{r}
-# nodes <- read.csv("Dataset1-Media-Example-NODES.csv", header=T, as.is=T)
-# links <- read.csv("Dataset1-Media-Example-EDGES.csv", header=T, as.is=T)
+```{r, warning=FALSE, message=FALSE}
+library(plotly)
+# economics : US economic time series
+p <- plot_ly(economics, x = ~date, y = ~unemploy / pop)
+p
 ```
 
 ```{r}
-library('igraph')
-# net <- graph_from_data_frame(d=links, vertices=nodes, directed=T) 
-# net
+mtcars$am[which(mtcars$am == 0)] <- 'Automatic'
+mtcars$am[which(mtcars$am == 1)] <- 'Manual'
+mtcars$am <- as.factor(mtcars$am)
+
+p <- plot_ly(mtcars, 
+             x = ~wt, y = ~hp, z = ~qsec, 
+             color = ~am, colors = c('#BF382A', '#0C4B8E')) %>%
+  add_markers() %>%
+  layout(scene = list(xaxis = list(title = 'Weight'),
+                      yaxis = list(title = 'Gross horsepower'),
+                      zaxis = list(title = '1/4 mile time')))
+p
 ```
 
+```{r}
+plot_ly (
+  # Using a dataframe:
+  type = 'surface' , z = ~volcano )
+```
+
+```{r}
+plot_ly(
+  type = 'scatter3d', 
+  x = c( 9, 8, 5, 1 ) , 
+  y = c( 1, 2, 4, 8 ) , 
+  z = c( 11, 8, 15, 3 ) ,
+  mode = 'lines' )
+```
+
+# Conclusion
+
+We reviewed various kinds of data visualisation achievable using R and extension packages. The legacy packages are now completely outdated. Most people use at least **ggplot2** and even **plotly** which allows interactive graphs using html.
+
+Word clouds are really just for fun... 
+
+# Assignement for next week
+
+Practice at least one of each graph using any kind of data.
